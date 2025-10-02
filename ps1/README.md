@@ -1,7 +1,7 @@
 # Problem Set 1 - Threaded Prime Number Search
 
 ### Compilation
-Each variant is a separate program. Use the following commands to compile with C++20:
+Each variant is a separate program. Make sure you are in the `/ps1 directory`. Use the following commands to compile with C++20:
 
 ```bash
 clang++ -std=c++20 v1.cpp -o v1
