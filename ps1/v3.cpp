@@ -6,7 +6,9 @@ int main() {
     print_line("[RUN START] " + now_timestamp());
     auto t0 = std::chrono::steady_clock::now();
 
-    std::size_t primes_found = 0;
+    // std::size_t primes_found = 0;
+    std::atomic<std::size_t> primes_found{0};
+
 
     auto print_prime = [&](std::uint64_t n, std::thread::id tid){
         std::ostringstream oss;
