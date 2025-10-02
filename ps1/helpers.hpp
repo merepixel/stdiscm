@@ -17,9 +17,44 @@
 #include <algorithm>
 
 
+struct WorkerSlice {
+    std::uint64_t begin;
+    std::uint64_t count;
+};
+
+inline WorkerSlice compute_worker_slice(std::uint64_t start,
+                                        std::uint64_t total,
+                                        unsigned int threads,
+                                        unsigned int idx) {
+    WorkerSlice slice{start, 0};
+    if (threads == 0 || total == 0 || idx >= threads) {
+        return slice;
+    }
+
+    std::uint64_t chunk = total / threads;
+    std::uint64_t rem = total % threads;
+    std::uint64_t idx64 = static_cast<std::uint64_t>(idx);
+    std::uint64_t base_offset = static_cast<std::uint64_t>(
+        static_cast<__uint128_t>(idx64) * chunk +
+        std::min<std::uint64_t>(idx64, rem));
+    std::uint64_t next_idx64 = idx64 + 1;
+    std::uint64_t next_offset = static_cast<std::uint64_t>(
+        static_cast<__uint128_t>(next_idx64) * chunk +
+        std::min<std::uint64_t>(next_idx64, rem));
+
+    slice.count = next_offset - base_offset;
+    if (slice.count == 0) {
+        return slice;
+    }
+
+    slice.begin = start + base_offset;
+    return slice;
+}
+
+
 struct Config {
     unsigned int threads = std::max(1u, std::thread::hardware_concurrency());
-    std::uint64_t limit = 100000; 
+    std::uint64_t limit = 100000;
 };
 
 inline std::mutex& cout_mutex() {

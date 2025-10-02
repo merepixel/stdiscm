@@ -12,13 +12,14 @@ int main() {
     std::vector<std::vector<std::uint64_t>> buckets(cfg.threads);
 
     auto worker = [&](unsigned idx){
-        std::uint64_t a = start + (total * idx) / cfg.threads;
-        std::uint64_t b = start + (total * (idx + 1)) / cfg.threads;
-        if (b > end + 1) b = end + 1; 
-        if (a >= b) return;
+        auto slice = compute_worker_slice(start, total, cfg.threads, idx);
+        if (slice.count == 0) return;
         auto& out = buckets[idx];
-        out.reserve((b - a) / 10 + 1);
-        for (std::uint64_t n = a; n < b; ++n) if (is_prime_single(n)) out.push_back(n);
+        out.reserve(slice.count / 10 + 1);
+        for (std::uint64_t offset = 0; offset < slice.count; ++offset) {
+            std::uint64_t n = slice.begin + offset;
+            if (is_prime_single(n)) out.push_back(n);
+        }
     };
 
     for (unsigned i = 0; i < cfg.threads; ++i) workers.emplace_back(worker, i);

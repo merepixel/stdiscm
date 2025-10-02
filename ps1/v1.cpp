@@ -16,11 +16,10 @@ int main() {
 
     std::uint64_t total = end - start + 1;
     auto worker = [&](unsigned idx){
-        std::uint64_t a = start + (total * idx) / cfg.threads;
-        std::uint64_t b = start + (total * (idx + 1)) / cfg.threads;
-        if (b > end + 1) b = end + 1; 
-        if (a >= b) return;          
-        for (std::uint64_t n = a; n < b; ++n) {
+        auto slice = compute_worker_slice(start, total, cfg.threads, idx);
+        if (slice.count == 0) return;
+        for (std::uint64_t offset = 0; offset < slice.count; ++offset) {
+            std::uint64_t n = slice.begin + offset;
             if (is_prime_single(n)) {
                 std::ostringstream oss;
                 oss << "[" << now_timestamp() << "] [thread " << std::this_thread::get_id()
