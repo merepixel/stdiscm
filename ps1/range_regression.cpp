@@ -43,7 +43,6 @@ void check_ranges(std::uint64_t limit, unsigned int threads) {
 }
 
 }
-
 int main() {
     check_ranges(std::numeric_limits<std::uint64_t>::max() - 16, 1'000'000);
     check_ranges(std::numeric_limits<std::uint64_t>::max() - 16, 64);

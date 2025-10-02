@@ -90,7 +90,6 @@ inline std::optional<Config> read_config_file(const std::string& path) {
     Config cfg;
     std::string line;
     while (std::getline(in, line)) {
-        // Trim spaces
         auto trim = [](std::string& x){
             while(!x.empty() && (x.front()==' ' || x.front()=='\t')) x.erase(x.begin());
             while(!x.empty() && (x.back()==' ' || x.back()=='\t' || x.back()=='\r')) x.pop_back();
