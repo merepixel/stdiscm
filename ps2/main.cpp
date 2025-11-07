@@ -215,6 +215,27 @@ int main() {
     const size_t unmatched_dps    = dps    - 3 * parties;
     const size_t unmatched_total  = unmatched_tanks + unmatched_healers + unmatched_dps;
 
+    // deadlock guard: handle n == 0 
+    if (n == 0) {
+        if (parties == 0) {
+            cout << "\nConfig accepted:\n";
+            cout << "  instances=0, tanks=" << tanks
+                 << ", healers=" << healers << ", dps=" << dps
+                 << ", t1=" << t1 << "s, t2=" << t2 << "s\n";
+            cout << "  Total parties to run: 0\n";
+            cout << "  Unmatched (cannot form full parties): Tanks=" << unmatched_tanks
+                 << ", Healers=" << unmatched_healers << ", DPS=" << unmatched_dps
+                 << " (Total=" << unmatched_total << ")\n\n";
+            cout << "No instances available and no runnable parties. Exiting.\n";
+            return 0;
+        } else {
+            cerr << "\nError: " << parties
+                 << " full parties can be formed, but n = 0 (no instances available).\n"
+                 << "Cannot schedule parties without instances. Exiting.\n";
+            return 1;
+        }
+    }
+
     // shared state init
     Shared S;
     S.n = n;
